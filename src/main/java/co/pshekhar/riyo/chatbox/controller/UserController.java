@@ -7,6 +7,7 @@ import co.pshekhar.riyo.chatbox.model.UserLoginResponse;
 import co.pshekhar.riyo.chatbox.model.UserLogoutRequest;
 import co.pshekhar.riyo.chatbox.service.UserService;
 import io.vavr.control.Either;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/create/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> createUser(@RequestBody CreateUserRequest request) {
+    ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok().body(userService.createUser(request));
     }
 

@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  chatbox_db:
+    image: 'mysql:8.0.31'
+    environment:
+      - MYSQL_ROOT_PASSWORD=iamgroot
+      - MYSQL_DATABASE=chatbox_dev_db
+      - MYSQL_USER=dinobot
+      - MYSQL_PASSWORD=crawlingteeth
+    volumes:
+      - chatbox-data:/var/lib/mysql
+    networks:
+      - chatbox-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    ports:
+      - 5678:3306
+
+  chatbox_app:
+    image: chatbox:latest
+    ports:
+      - 8080:8080
+    networks:
+      - chatbox-network
+    depends_on:
+      chatbox_db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=chatbox_db
+      - ENABLE_TOKEN_SECURITY=false
+
+networks:
+  chatbox-network:
+
+volumes:
+ chatbox-data:
