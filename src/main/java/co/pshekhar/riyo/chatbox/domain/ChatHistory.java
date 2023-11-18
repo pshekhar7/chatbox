@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -34,10 +35,10 @@ public class ChatHistory {
     @Setter(AccessLevel.NONE)
     private String id;
 
-    @OneToOne
+    @ManyToOne
     private User receiver; // TODO: index this field
 
-    @OneToOne
+    @ManyToOne
     private User sender;
 
     @Convert(converter = PIIDataConverter.class)
