@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ChatboxApplication {
 
     public static void main(String[] args) {
-		SpringApplication.run(ChatboxApplication.class, args);
+        SpringApplication.run(ChatboxApplication.class, args);
     }
 
 }

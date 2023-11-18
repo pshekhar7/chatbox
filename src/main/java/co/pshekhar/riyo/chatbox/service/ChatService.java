@@ -6,6 +6,7 @@ import co.pshekhar.riyo.chatbox.model.ChatHistoryRequest;
 import co.pshekhar.riyo.chatbox.model.ChatHistoryResponse;
 import co.pshekhar.riyo.chatbox.model.GenericResponse;
 import co.pshekhar.riyo.chatbox.model.GetUnreadMsgRequest;
+import co.pshekhar.riyo.chatbox.model.SendGroupMsgRequest;
 import co.pshekhar.riyo.chatbox.model.SendMsgRequest;
 import co.pshekhar.riyo.chatbox.model.UnreadMsgResponse;
 import co.pshekhar.riyo.chatbox.model.helper.UnreadMsg;
@@ -43,6 +44,31 @@ public class ChatService {
         chat.setMessage(request.getText());
         chatHistoryRepository.save(chat);
         return GenericResponse.builder().status("success").build();
+    }
+
+    public GenericResponse sendGrpMessage(SendGroupMsgRequest request) {
+        List<String> errList = request
+                .getToList()
+                .stream()
+                .map(to -> {
+                    SendMsgRequest req = new SendMsgRequest();
+                    req.setFrom(req.getFrom());
+                    req.setTo(to);
+                    req.setFromUser(request.getFromUser());
+                    req.setText(request.getText());
+                    return sendMessage(req);
+                })
+                .filter(res -> "failure".equalsIgnoreCase(res.getStatus()))
+                .map(res -> {
+                    String message = res.getMessage();
+                    int stidx = message.indexOf("[");
+                    int endidx = message.indexOf("]");
+                    return message.substring(stidx + 1, endidx);
+                })
+                .toList();
+
+        boolean isSuccess = errList.size() == 0;
+        return GenericResponse.builder().status(isSuccess ? "success" : "failure").message(isSuccess ? null : "Message sending failed to usernames: " + errList).build();
     }
 
     public UnreadMsgResponse getUnread(GetUnreadMsgRequest request) {

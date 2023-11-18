@@ -5,6 +5,7 @@ import co.pshekhar.riyo.chatbox.model.ChatHistoryRequest;
 import co.pshekhar.riyo.chatbox.model.ChatHistoryResponse;
 import co.pshekhar.riyo.chatbox.model.GenericResponse;
 import co.pshekhar.riyo.chatbox.model.GetUnreadMsgRequest;
+import co.pshekhar.riyo.chatbox.model.SendGroupMsgRequest;
 import co.pshekhar.riyo.chatbox.model.SendMsgRequest;
 import co.pshekhar.riyo.chatbox.service.ChatService;
 import co.pshekhar.riyo.chatbox.service.SessionService;
@@ -52,6 +53,18 @@ public class ChatController {
             request.setFromUser(validationEither.get());
         }
         return ResponseEntity.ok().body(chatService.sendMessage(request));
+    }
+
+    @PostMapping(value = "/send/text/group", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Object> sendTextGroup(@RequestBody SendGroupMsgRequest request,
+                                         @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
+        Either<Void, User> validationEither = validateSession(request.getFrom(), sessionToken);
+        if (validationEither.isLeft()) {
+            return ResponseEntity.status(403).body(GenericResponse.builder().status("failure").message("Invalid session. Please login and retry").build());
+        } else {
+            request.setFromUser(validationEither.get());
+        }
+        return ResponseEntity.ok().body(chatService.sendGrpMessage(request));
     }
 
     @GetMapping(value = "/get/history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
