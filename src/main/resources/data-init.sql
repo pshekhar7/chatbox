@@ -1,0 +1,1 @@
+INSERT IGNORE INTO app_config(name, value) values('pii-field-encryption', '{"password":"y371bhwr8evtcijp4560zxkmq2ladngf","iv":"8079896567784743"}');

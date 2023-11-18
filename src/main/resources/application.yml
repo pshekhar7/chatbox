@@ -1,0 +1,14 @@
+spring:
+  sql:
+    init:
+      mode: always
+      platform: init
+  profiles:
+    active: dev
+  dataSource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  main:
+    banner-mode: off
+  output:
+    ansi:
+      enabled: ALWAYS
