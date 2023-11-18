@@ -8,12 +8,14 @@ import co.pshekhar.riyo.chatbox.model.GetUnreadMsgRequest;
 import co.pshekhar.riyo.chatbox.model.SendMsgRequest;
 import co.pshekhar.riyo.chatbox.service.ChatService;
 import co.pshekhar.riyo.chatbox.service.SessionService;
+import co.pshekhar.riyo.chatbox.util.Constants;
 import io.vavr.control.Either;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +31,9 @@ public class ChatController {
     }
 
     @GetMapping(value = "/get/unread", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> getUnread(@RequestBody GetUnreadMsgRequest request) {
-        Either<Void, User> validationEither = validateSession(request.getUsername());
+    ResponseEntity<Object> getUnread(@RequestBody GetUnreadMsgRequest request,
+                                     @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
+        Either<Void, User> validationEither = validateSession(request.getUsername(), sessionToken);
         if (validationEither.isLeft()) {
             return ResponseEntity.status(403).body(GenericResponse.builder().status("failure").message("Invalid session. Please login and retry").build());
         } else {
@@ -40,8 +43,9 @@ public class ChatController {
     }
 
     @PostMapping(value = "/send/text/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> sendText(@RequestBody SendMsgRequest request) {
-        Either<Void, User> validationEither = validateSession(request.getFrom());
+    ResponseEntity<Object> sendText(@RequestBody SendMsgRequest request,
+                                    @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
+        Either<Void, User> validationEither = validateSession(request.getFrom(), sessionToken);
         if (validationEither.isLeft()) {
             return ResponseEntity.status(403).body(GenericResponse.builder().status("failure").message("Invalid session. Please login and retry").build());
         } else {
@@ -51,8 +55,9 @@ public class ChatController {
     }
 
     @GetMapping(value = "/get/history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> getHistory(@RequestBody ChatHistoryRequest request) {
-        Either<Void, User> validationEither = validateSession(request.getUser());
+    ResponseEntity<Object> getHistory(@RequestBody ChatHistoryRequest request,
+                                      @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
+        Either<Void, User> validationEither = validateSession(request.getUser(), sessionToken);
         if (validationEither.isLeft()) {
             return ResponseEntity.status(403).body(GenericResponse.builder().status("failure").message("Invalid session. Please login and retry").build());
         } else {
@@ -62,7 +67,7 @@ public class ChatController {
         return ResponseEntity.ok().body(chatEither.isLeft() ? chatEither.getLeft() : chatEither.get());
     }
 
-    Either<Void, User> validateSession(String username) {
-        return sessionService.hasValidSession(username, null);
+    Either<Void, User> validateSession(String username, String sessionToken) {
+        return sessionService.hasValidSession(username, sessionToken);
     }
 }

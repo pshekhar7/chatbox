@@ -38,15 +38,15 @@ public class ChatService {
             return GenericResponse.builder().status("failure").message("'to' user: [" + request.getTo() + "] not found").build();
         }
         ChatHistory chat = new ChatHistory();
-        chat.setSender(request.getFromUser());
-        chat.setReceiver(toUser);
+        chat.setSender(request.getFromUser().getUsername());
+        chat.setReceiver(toUser.getUsername());
         chat.setMessage(request.getText());
         chatHistoryRepository.save(chat);
         return GenericResponse.builder().status("success").build();
     }
 
     public UnreadMsgResponse getUnread(GetUnreadMsgRequest request) {
-        List<ChatHistory> unreads = chatHistoryRepository.findAllByReceiverAndIsRead(request.getUser(), Boolean.FALSE);
+        List<ChatHistory> unreads = chatHistoryRepository.findAllByReceiverAndIsRead(request.getUsername(), Boolean.FALSE);
         boolean hasUnread = CollectionUtils.isNotEmpty(unreads);
         return UnreadMsgResponse
                 .builder()
@@ -61,8 +61,8 @@ public class ChatService {
         if (null == friend) {
             return Either.left(GenericResponse.builder().status("failure").message("'friend' user: [" + request.getFriend() + "] not found").build());
         }
-        List<ChatHistory> userMsgs = chatHistoryRepository.findAllBySenderAndReceiver(request.getForUser(), friend);
-        List<ChatHistory> friendMsgs = chatHistoryRepository.findAllBySenderAndReceiver(friend, request.getForUser());
+        List<ChatHistory> userMsgs = chatHistoryRepository.findAllBySenderAndReceiver(request.getUser(), request.getFriend());
+        List<ChatHistory> friendMsgs = chatHistoryRepository.findAllBySenderAndReceiver(request.getFriend(), request.getUser());
         userMsgs.addAll(friendMsgs);
         List<ChatHistory> chats = new ArrayList<>(userMsgs);
         final List<Map<String, String>> res = new ArrayList<>();
@@ -77,7 +77,7 @@ public class ChatService {
                         return 0;
                     }
                 })
-                .map(ch -> res.add(Collections.singletonMap(ch.getSender().getUsername(), ch.getMessage())))
+                .map(ch -> res.add(Collections.singletonMap(ch.getSender(), ch.getMessage())))
                 .toList();
         return Either.right(ChatHistoryResponse
                 .builder()
@@ -91,8 +91,17 @@ public class ChatService {
         Map<String, List<String>> res = new HashMap<>();
         unreads
                 .stream()
+                .sorted((ch1, ch2) -> {
+                    if (ch1.getCreatedOn().isBefore(ch2.getCreatedOn())) {
+                        return -1;
+                    } else if (ch1.getCreatedOn().isBefore(ch2.getCreatedOn())) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                })
                 .map(chatHistory -> {
-                    final String sender = chatHistory.getSender().getUsername();
+                    final String sender = chatHistory.getSender();
                     if (!res.containsKey(sender)) {
                         res.put(sender, new ArrayList<>());
                     }

@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @Setter
-@Table(indexes = {@Index(columnList = "receiver_id", name = "receiver_idx")})
+@Table(indexes = {@Index(columnList = "receiver", name = "receiver_idx")})
 public class ChatHistory {
     public ChatHistory() {
         isRead = Boolean.FALSE;
@@ -35,11 +35,9 @@ public class ChatHistory {
     @Setter(AccessLevel.NONE)
     private String id;
 
-    @ManyToOne
-    private User receiver; // TODO: index this field
+    private String receiver; // TODO: index this field
 
-    @ManyToOne
-    private User sender;
+    private String sender;
 
     @Convert(converter = PIIDataConverter.class)
     private String message;
