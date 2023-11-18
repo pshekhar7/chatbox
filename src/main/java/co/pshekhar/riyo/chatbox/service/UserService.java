@@ -32,8 +32,8 @@ public class UserService {
         this.env = env;
     }
 
-    Either<GenericResponse, UserLoginResponse> loginUser(UserLoginRequest request) {
-        User existingUser = userRepository.findByUsername(request.getUsername()).orElse(null);
+    public Either<GenericResponse, UserLoginResponse> loginUser(UserLoginRequest request) {
+        User existingUser = userRepository.findByUsernameAndPassword(request.getUsername(), request.getPasscode()).orElse(null);
         if (null == existingUser) {
             return Either.left(GenericResponse
                     .builder()
@@ -55,39 +55,42 @@ public class UserService {
         return Either.right(UserLoginResponse.builder().status("success").sessionToken(sendToken ? sessionToken : null).build());
     }
 
-    Either<GenericResponse, GenericResponse> logoutUser(UserLogoutRequest request) {
+    public GenericResponse logoutUser(UserLogoutRequest request) {
         User existingUser = userRepository.findByUsername(request.getUsername()).orElse(null);
         if (null == existingUser) {
-            return Either.left(GenericResponse
+            return GenericResponse
                     .builder()
                     .status("failure")
                     .message("User not found")
-                    .build());
+                    .build();
         }
         sessionRepository.findByUser(existingUser).ifPresent(sessionRepository::delete);
-        return Either.right(GenericResponse
+        return GenericResponse
                 .builder()
                 .status("success")
-                .build());
+                .build();
     }
 
-    Either<GenericResponse, User> createUser(CreateUserRequest request) {
+    public GenericResponse createUser(CreateUserRequest request) {
         User existingUser = userRepository.findByUsername(request.getUsername()).orElse(null);
         if (null != existingUser) {
-            return Either.left(GenericResponse
+            return GenericResponse
                     .builder()
                     .status("failure")
                     .message("User already exists")
-                    .build());
+                    .build();
         }
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPasscode());
-        User newUser = userRepository.save(user);
-        return Either.right(newUser);
+        userRepository.save(user);
+        return GenericResponse
+                .builder()
+                .status("success")
+                .build();
     }
 
-    GetUsersResponse getAllUsers(CreateUserRequest request) {
+    public GetUsersResponse getAllUsers() {
         List<String> users = userRepository
                 .findAll()
                 .stream()

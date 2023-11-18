@@ -1,6 +1,7 @@
 package co.pshekhar.riyo.chatbox.domain;
 
 import co.pshekhar.riyo.chatbox.util.PIIDataConverter;
+import co.pshekhar.riyo.chatbox.util.UniqueIdGenerator;
 import co.pshekhar.riyo.chatbox.util.Utilities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -9,9 +10,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -21,15 +24,17 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE session SET expired = 'true' WHERE id = ?")
-@Where(clause = "expired <> 'true'")
+@SQLDelete(sql = "UPDATE session SET expired = 1 WHERE id = ?")
+@Where(clause = "expired <> 1")
 public class Session {
     public Session() {
         expired = Boolean.FALSE;
     }
 
     @Id
-    @GeneratedValue
+    @GenericGenerator(name = "session_id", type = UniqueIdGenerator.class)
+    @GeneratedValue(generator = "session_id")
+    @Setter(AccessLevel.NONE)
     private String id;
 
     @Column(unique = true)

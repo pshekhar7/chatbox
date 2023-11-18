@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ChatHistoryRepository extends JpaRepository<ChatHistory, String> {
-    List<ChatHistory> findAllByReceiverAndRead(User receiver, Boolean read);
+    List<ChatHistory> findAllByReceiverAndIsRead(User receiver, Boolean read);
 
     List<ChatHistory> findAllBySenderAndReceiver(User sender, User receiver);
 }

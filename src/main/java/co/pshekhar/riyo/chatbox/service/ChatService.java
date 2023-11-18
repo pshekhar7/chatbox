@@ -32,21 +32,21 @@ public class ChatService {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    Either<GenericResponse, GenericResponse> sendMessage(SendMsgRequest request) {
+    public GenericResponse sendMessage(SendMsgRequest request) {
         User toUser = userRepository.findByUsername(request.getTo()).orElse(null);
         if (null == toUser) {
-            return Either.left(GenericResponse.builder().status("failure").message("'to' user: [" + request.getTo() + "] not found").build());
+            return GenericResponse.builder().status("failure").message("'to' user: [" + request.getTo() + "] not found").build();
         }
         ChatHistory chat = new ChatHistory();
         chat.setSender(request.getFromUser());
         chat.setReceiver(toUser);
         chat.setMessage(request.getText());
         chatHistoryRepository.save(chat);
-        return Either.right(GenericResponse.builder().status("success").build());
+        return GenericResponse.builder().status("success").build();
     }
 
-    UnreadMsgResponse getUnread(GetUnreadMsgRequest request) {
-        List<ChatHistory> unreads = chatHistoryRepository.findAllByReceiverAndRead(request.getUser(), Boolean.FALSE);
+    public UnreadMsgResponse getUnread(GetUnreadMsgRequest request) {
+        List<ChatHistory> unreads = chatHistoryRepository.findAllByReceiverAndIsRead(request.getUser(), Boolean.FALSE);
         boolean hasUnread = CollectionUtils.isNotEmpty(unreads);
         return UnreadMsgResponse
                 .builder()
@@ -56,7 +56,7 @@ public class ChatService {
                 .build();
     }
 
-    Either<GenericResponse, ChatHistoryResponse> getChatHistory(ChatHistoryRequest request) {
+    public Either<GenericResponse, ChatHistoryResponse> getChatHistory(ChatHistoryRequest request) {
         User friend = userRepository.findByUsername(request.getFriend()).orElse(null);
         if (null == friend) {
             return Either.left(GenericResponse.builder().status("failure").message("'friend' user: [" + request.getFriend() + "] not found").build());
@@ -97,7 +97,7 @@ public class ChatService {
                         res.put(sender, new ArrayList<>());
                     }
                     res.get(sender).add(chatHistory.getMessage());
-                    chatHistory.setRead(Boolean.TRUE);
+                    chatHistory.setIsRead(Boolean.TRUE);
                     return 1;
                 })
                 .toList();
