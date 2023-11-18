@@ -3,6 +3,7 @@ package co.pshekhar.riyo.chatbox.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,10 @@ public class Utilities {
 
     public static ZonedDateTime getCurrentTime() {
         return ZonedDateTime.now(ZoneId.of(Constants.IND_ZONE_ID));
+    }
+
+    public static String generateRandomId() {
+        return RandomStringUtils.randomAlphanumeric(13);
     }
 
 }
