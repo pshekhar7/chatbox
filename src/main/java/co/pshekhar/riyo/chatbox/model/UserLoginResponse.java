@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class GenericResponse {
+public class UserLoginResponse {
     private String status;
-    private String message;
+    private String sessionToken;
 }

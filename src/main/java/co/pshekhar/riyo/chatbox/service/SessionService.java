@@ -23,8 +23,7 @@ public class SessionService {
         return token;
     }
 
-    public String expireAndGetSessionToken(User user, String token) {
-        Session session = sessionRepository.findByUserAndToken(user, token).orElse(null);
+    public String expireAndGetSessionToken(User user, Session session) {
         if (session != null) {
             sessionRepository.deleteById(session.getId());
         }
