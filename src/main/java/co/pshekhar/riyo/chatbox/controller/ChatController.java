@@ -1,16 +1,17 @@
 package co.pshekhar.riyo.chatbox.controller;
 
 import co.pshekhar.riyo.chatbox.domain.User;
-import co.pshekhar.riyo.chatbox.model.ChatHistoryRequest;
-import co.pshekhar.riyo.chatbox.model.ChatHistoryResponse;
-import co.pshekhar.riyo.chatbox.model.GenericResponse;
-import co.pshekhar.riyo.chatbox.model.GetUnreadMsgRequest;
-import co.pshekhar.riyo.chatbox.model.SendGroupMsgRequest;
-import co.pshekhar.riyo.chatbox.model.SendMsgRequest;
+import co.pshekhar.riyo.chatbox.model.request.ChatHistoryRequest;
+import co.pshekhar.riyo.chatbox.model.request.GetUnreadMsgRequest;
+import co.pshekhar.riyo.chatbox.model.request.SendGroupMsgRequest;
+import co.pshekhar.riyo.chatbox.model.request.SendMsgRequest;
+import co.pshekhar.riyo.chatbox.model.response.ChatHistoryResponse;
+import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
 import co.pshekhar.riyo.chatbox.service.ChatService;
 import co.pshekhar.riyo.chatbox.service.SessionService;
 import co.pshekhar.riyo.chatbox.util.Constants;
 import io.vavr.control.Either;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class ChatController {
     }
 
     @GetMapping(value = "/get/unread", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> getUnread(@RequestBody GetUnreadMsgRequest request,
+    ResponseEntity<Object> getUnread(@Valid @RequestBody GetUnreadMsgRequest request,
                                      @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
         Either<Void, User> validationEither = validateSession(request.getUsername(), sessionToken);
         if (validationEither.isLeft()) {
@@ -44,7 +45,7 @@ public class ChatController {
     }
 
     @PostMapping(value = "/send/text/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> sendText(@RequestBody SendMsgRequest request,
+    ResponseEntity<Object> sendText(@Valid @RequestBody SendMsgRequest request,
                                     @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
         Either<Void, User> validationEither = validateSession(request.getFrom(), sessionToken);
         if (validationEither.isLeft()) {
@@ -56,7 +57,7 @@ public class ChatController {
     }
 
     @PostMapping(value = "/send/text/group", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> sendTextGroup(@RequestBody SendGroupMsgRequest request,
+    ResponseEntity<Object> sendTextGroup(@Valid @RequestBody SendGroupMsgRequest request,
                                          @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
         Either<Void, User> validationEither = validateSession(request.getFrom(), sessionToken);
         if (validationEither.isLeft()) {
@@ -68,7 +69,7 @@ public class ChatController {
     }
 
     @GetMapping(value = "/get/history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> getHistory(@RequestBody ChatHistoryRequest request,
+    ResponseEntity<Object> getHistory(@Valid @RequestBody ChatHistoryRequest request,
                                       @RequestHeader(name = Constants.SESSION_TOKEN_HEADER_KEY, required = false) String sessionToken) {
         Either<Void, User> validationEither = validateSession(request.getUser(), sessionToken);
         if (validationEither.isLeft()) {

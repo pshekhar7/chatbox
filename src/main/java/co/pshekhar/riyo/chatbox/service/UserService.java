@@ -2,12 +2,12 @@ package co.pshekhar.riyo.chatbox.service;
 
 import co.pshekhar.riyo.chatbox.domain.Session;
 import co.pshekhar.riyo.chatbox.domain.User;
-import co.pshekhar.riyo.chatbox.model.CreateUserRequest;
-import co.pshekhar.riyo.chatbox.model.GenericResponse;
-import co.pshekhar.riyo.chatbox.model.GetUsersResponse;
-import co.pshekhar.riyo.chatbox.model.UserLoginRequest;
-import co.pshekhar.riyo.chatbox.model.UserLoginResponse;
-import co.pshekhar.riyo.chatbox.model.UserLogoutRequest;
+import co.pshekhar.riyo.chatbox.model.request.CreateUserRequest;
+import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
+import co.pshekhar.riyo.chatbox.model.response.GetUsersResponse;
+import co.pshekhar.riyo.chatbox.model.request.UserLoginRequest;
+import co.pshekhar.riyo.chatbox.model.response.UserLoginResponse;
+import co.pshekhar.riyo.chatbox.model.request.UserLogoutRequest;
 import co.pshekhar.riyo.chatbox.repository.SessionRepository;
 import co.pshekhar.riyo.chatbox.repository.UserRepository;
 import co.pshekhar.riyo.chatbox.util.Constants;

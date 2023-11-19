@@ -2,11 +2,11 @@
 
 1. After unzipping the file, `cd` to chatbox
 2. The chatbox folder contains all project files along with docker related files.
-2. To build applicaiton image, run
+3. To build applicaiton image, run
      `docker build -t chatbox:latest .`
-3. To start both the application and the database, run
+4. To start both the application and the database, run
      `docker compose up`
-4. Application is up and running on port 8080.
+5. Application is up and running on port 8080.
 
 
 # APIs
@@ -32,3 +32,10 @@ Response:
     "status": "success"
 }
 ```
+
+# Token based Authorization
+
+1. The application supports token based authorization option.
+2. This is driven by setting the flag `ENABLE_TOKEN_SECURITY` in docker compose file under application's environment.
+3. By doing so, the login response returns a `sessionToken` response. 
+4. Going forward, this token is required to be passed in header under `x-session-token` to successfully access resources.

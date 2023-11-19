@@ -1,4 +1,4 @@
-package co.pshekhar.riyo.chatbox.model;
+package co.pshekhar.riyo.chatbox.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;

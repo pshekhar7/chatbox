@@ -1,10 +1,10 @@
 package co.pshekhar.riyo.chatbox.controller;
 
-import co.pshekhar.riyo.chatbox.model.CreateUserRequest;
-import co.pshekhar.riyo.chatbox.model.GenericResponse;
-import co.pshekhar.riyo.chatbox.model.UserLoginRequest;
-import co.pshekhar.riyo.chatbox.model.UserLoginResponse;
-import co.pshekhar.riyo.chatbox.model.UserLogoutRequest;
+import co.pshekhar.riyo.chatbox.model.request.CreateUserRequest;
+import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
+import co.pshekhar.riyo.chatbox.model.request.UserLoginRequest;
+import co.pshekhar.riyo.chatbox.model.response.UserLoginResponse;
+import co.pshekhar.riyo.chatbox.model.request.UserLogoutRequest;
 import co.pshekhar.riyo.chatbox.service.UserService;
 import io.vavr.control.Either;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> loginUser(@RequestBody UserLoginRequest request) {
+    ResponseEntity<Object> loginUser(@Valid @RequestBody UserLoginRequest request) {
         Either<GenericResponse, UserLoginResponse> responseEither = userService.loginUser(request);
         return ResponseEntity.ok().body(responseEither.isLeft() ? responseEither.getLeft() : responseEither.get());
     }
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/logout", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> logoutUser(@RequestBody UserLogoutRequest request) {
+    ResponseEntity<Object> logoutUser(@Valid @RequestBody UserLogoutRequest request) {
         return ResponseEntity.ok().body(userService.logoutUser(request));
     }
 }

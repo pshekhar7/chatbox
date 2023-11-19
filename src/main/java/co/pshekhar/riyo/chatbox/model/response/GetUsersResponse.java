@@ -1,4 +1,4 @@
-package co.pshekhar.riyo.chatbox.model;
+package co.pshekhar.riyo.chatbox.model.response;
 
 import lombok.Builder;
 import lombok.Getter;
