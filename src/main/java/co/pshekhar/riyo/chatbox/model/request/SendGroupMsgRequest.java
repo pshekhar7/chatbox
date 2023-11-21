@@ -4,6 +4,7 @@ import co.pshekhar.riyo.chatbox.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,7 +18,7 @@ import java.util.List;
 public class SendGroupMsgRequest {
     @NotBlank(message = "from must not be blank")
     private String from;
-    @NotBlank(message = "toList must not be blank")
+    @NotEmpty(message = "toList must not be blank")
     private List<String> toList;
     @NotBlank(message = "text must not be blank")
     private String text;

@@ -55,6 +55,6 @@ public class Session {
 
     @JsonIgnore
     public boolean isExpired() {
-        return Utilities.getCurrentTime().plusMinutes(15L).isBefore(createdOn);
+        return Utilities.getCurrentTime().minusMinutes(15L).isAfter(createdOn);
     }
 }

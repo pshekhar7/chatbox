@@ -48,6 +48,10 @@ public class SessionService {
         if (null != session && !session.isExpired()) {
             return Either.right(user);
         } else {
+            if (null != session) {
+                // delete token
+                sessionRepository.deleteById(session.getId());
+            }
             return Either.left(null);
         }
     }
