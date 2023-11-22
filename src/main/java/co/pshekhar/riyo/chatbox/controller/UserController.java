@@ -1,10 +1,11 @@
 package co.pshekhar.riyo.chatbox.controller;
 
+import co.pshekhar.riyo.chatbox.model.request.BlockUserRequest;
 import co.pshekhar.riyo.chatbox.model.request.CreateUserRequest;
-import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
 import co.pshekhar.riyo.chatbox.model.request.UserLoginRequest;
-import co.pshekhar.riyo.chatbox.model.response.UserLoginResponse;
 import co.pshekhar.riyo.chatbox.model.request.UserLogoutRequest;
+import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
+import co.pshekhar.riyo.chatbox.model.response.UserLoginResponse;
 import co.pshekhar.riyo.chatbox.service.UserService;
 import io.vavr.control.Either;
 import jakarta.validation.Valid;
@@ -45,4 +46,10 @@ public class UserController {
     ResponseEntity<Object> logoutUser(@Valid @RequestBody UserLogoutRequest request) {
         return ResponseEntity.ok().body(userService.logoutUser(request));
     }
+
+    @PostMapping(value = "/user/block", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Object> blockUser(@Valid @RequestBody BlockUserRequest request) {
+        return ResponseEntity.ok().body(userService.blockUser(request));
+    }
+
 }

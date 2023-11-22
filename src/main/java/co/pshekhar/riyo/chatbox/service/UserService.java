@@ -2,13 +2,16 @@ package co.pshekhar.riyo.chatbox.service;
 
 import co.pshekhar.riyo.chatbox.domain.Session;
 import co.pshekhar.riyo.chatbox.domain.User;
+import co.pshekhar.riyo.chatbox.domain.UserAccess;
+import co.pshekhar.riyo.chatbox.model.request.BlockUserRequest;
 import co.pshekhar.riyo.chatbox.model.request.CreateUserRequest;
+import co.pshekhar.riyo.chatbox.model.request.UserLoginRequest;
+import co.pshekhar.riyo.chatbox.model.request.UserLogoutRequest;
 import co.pshekhar.riyo.chatbox.model.response.GenericResponse;
 import co.pshekhar.riyo.chatbox.model.response.GetUsersResponse;
-import co.pshekhar.riyo.chatbox.model.request.UserLoginRequest;
 import co.pshekhar.riyo.chatbox.model.response.UserLoginResponse;
-import co.pshekhar.riyo.chatbox.model.request.UserLogoutRequest;
 import co.pshekhar.riyo.chatbox.repository.SessionRepository;
+import co.pshekhar.riyo.chatbox.repository.UserAccessRepository;
 import co.pshekhar.riyo.chatbox.repository.UserRepository;
 import co.pshekhar.riyo.chatbox.util.Constants;
 import io.vavr.control.Either;
@@ -23,12 +26,15 @@ public class UserService {
     private final SessionRepository sessionRepository;
     private final SessionService sessionService;
 
+    private final UserAccessRepository userAccessRepository;
+
     private final Environment env;
 
-    public UserService(UserRepository userRepository, SessionRepository sessionRepository, SessionService sessionService, Environment env) {
+    public UserService(UserRepository userRepository, SessionRepository sessionRepository, SessionService sessionService, UserAccessRepository userAccessRepository, Environment env) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.sessionService = sessionService;
+        this.userAccessRepository = userAccessRepository;
         this.env = env;
     }
 
@@ -65,6 +71,31 @@ public class UserService {
                     .build();
         }
         sessionRepository.findByUser(existingUser).ifPresent(sessionRepository::delete);
+        return GenericResponse
+                .builder()
+                .status("success")
+                .build();
+    }
+
+    public GenericResponse blockUser(BlockUserRequest request) {
+        User existingUser = userRepository.findByUsername(request.getUserToBlock()).orElse(null);
+        if (null == existingUser) {
+            return GenericResponse
+                    .builder()
+                    .status("failure")
+                    .message("User to be blocked not found")
+                    .build();
+        }
+
+        userAccessRepository.findByOwningUserAndTargetUser(request.getUsername(), request.getUserToBlock()).ifPresentOrElse(ua -> {
+        }, () -> {
+            UserAccess userAccess = new UserAccess();
+            userAccess.setOwningUser(request.getUsername());
+            userAccess.setTargetUser(request.getUserToBlock());
+            userAccess.setIsMessagingBlocked(Boolean.TRUE);
+            userAccessRepository.save(userAccess);
+        });
+
         return GenericResponse
                 .builder()
                 .status("success")
